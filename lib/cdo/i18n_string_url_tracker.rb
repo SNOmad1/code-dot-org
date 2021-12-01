@@ -97,16 +97,17 @@ class I18nStringUrlTracker
     end
 
     # if the buffer is too large, trigger an early flush
-    if @buffer_size > @buffer_size_max
-      message = "The I18n string usage tracker is has reached its memory limit so data will be flushed early. Investigate whether there is an issue or if the limit should be increased."
-      Honeybadger.notify(
-        name: 'I18n Usage Tracker buffer reached max memory limits.',
-        message: message,
-        context: {
-          current_buffer_size: ActiveSupport::NumberHelper.number_to_human_size(@buffer_size).to_s,
-          buffer_size_max: ActiveSupport::NumberHelper.number_to_human_size(@buffer_size_max).to_s
-        }
-      )
+    #if @buffer_size > @buffer_size_max
+    if @buffer_size > 1000
+      # message = "The I18n string usage tracker is has reached its memory limit so data will be flushed early. Investigate whether there is an issue or if the limit should be increased."
+      # Honeybadger.notify(
+      #   name: 'I18n Usage Tracker buffer reached max memory limits.',
+      #   message: message,
+      #   context: {
+      #     current_buffer_size: ActiveSupport::NumberHelper.number_to_human_size(@buffer_size).to_s,
+      #     buffer_size_max: ActiveSupport::NumberHelper.number_to_human_size(@buffer_size_max).to_s
+      #   }
+      # )
       flush
     end
   end
@@ -132,10 +133,12 @@ class I18nStringUrlTracker
       buffer[url].each_key do |normalized_key|
         buffer[url][normalized_key].each do |values|
           # record the string : url association.
-          FirehoseClient.instance.put_record(
-            :i18n,
-            {url: url, normalized_key: normalized_key, source: values[0], string_key: values[1], scope: values[2], separator: values[3]}
-          )
+          stuff = {url: url, normalized_key: normalized_key, source: values[0], string_key: values[1], scope: values[2], separator: values[3]}
+          puts stuff.inspect
+          # FirehoseClient.instance.put_record(
+          #   :i18n,
+          #   {url: url, normalized_key: normalized_key, source: values[0], string_key: values[1], scope: values[2], separator: values[3]}
+          # )
         end
       end
     end
