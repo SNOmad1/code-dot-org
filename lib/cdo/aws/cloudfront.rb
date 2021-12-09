@@ -135,19 +135,6 @@ module AWS
       # Add root-domain aliases to production environment stack.
       aliases += CONFIG[app][:aliases] if rack_env?(:production)
 
-      origin_custom_headers = [
-        {
-          HeaderName: 'X-Cdo-Cloudfront-Allow',
-          HeaderValue: "!Join ['', ['{{resolve:secretsmanager:', !Ref ListenerRuleSecretHeader, ':SecretString:header-value}}' ]]"
-        }
-      ]
-      origin_custom_headers += app_name == proxy ? [] : [
-        {
-          HeaderName: 'X-Cdo-Backend',
-          HeaderValue: app_name
-        }
-      ]
-
       behaviors, cloudfront, config = get_app_config(app)
       {
         Aliases: aliases,
@@ -186,6 +173,18 @@ module AWS
         Origins: [
           *HTTP_CACHE.keys.map do |app_name|
             proxy = (app == :hourofcode) ? :pegasus : app
+            origin_custom_headers = [
+              {
+                HeaderName: 'X-Cdo-Cloudfront-Allow',
+                HeaderValue: "!Join ['', ['{{resolve:secretsmanager:', !Ref ListenerRuleSecretHeader, ':SecretString:header-value}}' ]]"
+              }
+            ]
+            origin_custom_headers += app_name == proxy ? [] : [
+              {
+                HeaderName: 'X-Cdo-Backend',
+                HeaderValue: app_name
+              }
+            ]
             {
               Id: app_name == proxy ? 'cdo' : app_name,
               CustomOriginConfig: {
