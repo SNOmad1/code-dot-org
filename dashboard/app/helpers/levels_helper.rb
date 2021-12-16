@@ -181,7 +181,19 @@ module LevelsHelper
 
     view_options(public_caching: @public_caching)
 
-    level_requires_channel = (@level.channel_backed? && params[:action] != 'edit_blocks') || @level.is_a?(Javalab)
+    # In general, a channel is required if the level is channel-backed but
+    # there are several special cases:
+    # - A channel is not needed for levels with contained levels because the
+    #   outer level is read-only and there are no inner levels that are
+    #   channel-backed.
+    # - A channel is not needed in edit_blocks mode because the source code is
+    #   saved as a level property and not to the channel. Javalab is an exception
+    #   to this because it needs a channel for the levelbuilder to be able to
+    #   execute the code on the javabuilder service.
+    level_requires_channel =
+      @level.channel_backed? &&
+      !@level.try(:contained_levels).present? &&
+      (params[:action] != 'edit_blocks' || @level.is_a?(Javalab))
     # If the level is cached, the channel is loaded client-side in loadApp.js
     if level_requires_channel && !@public_caching
       view_options(
