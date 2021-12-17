@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import color from '../../util/color';
 import styleConstants from '../../styleConstants';
 import Button from '../Button';
+import {navigateToHref} from '@cdo/apps/utils';
 
 class SetUpMessage extends Component {
   static propTypes = {
@@ -42,9 +43,7 @@ class SetUpMessage extends Component {
           <div style={[styles.description, localeStyle]}>{descriptionText}</div>
         </div>
         <Button
-          __useDeprecatedTag
-          href={buttonUrl}
-          onClick={onClick}
+          onClick={onClick || (() => navigateToHref(buttonUrl))}
           className={buttonClass}
           color={Button.ButtonColor.gray}
           text={buttonText}
