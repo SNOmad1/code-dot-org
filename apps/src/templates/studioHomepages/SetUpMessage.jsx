@@ -8,18 +8,6 @@ import Button from '../Button';
 import {navigateToHref} from '@cdo/apps/utils';
 
 class SetUpMessage extends Component {
-  static propTypes = {
-    isRtl: PropTypes.bool,
-    headingText: PropTypes.string.isRequired,
-    descriptionText: PropTypes.string.isRequired,
-    className: PropTypes.string,
-    buttonText: PropTypes.string.isRequired,
-    buttonUrl: PropTypes.string,
-    buttonClass: PropTypes.string,
-    onClick: PropTypes.func,
-    solidBorder: PropTypes.bool
-  };
-
   render() {
     const {
       isRtl,
@@ -54,6 +42,18 @@ class SetUpMessage extends Component {
     );
   }
 }
+
+SetUpMessage.propTypes = {
+  isRtl: PropTypes.bool,
+  headingText: PropTypes.string.isRequired,
+  descriptionText: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  buttonText: PropTypes.string.isRequired,
+  buttonUrl: PropTypes.string,
+  buttonClass: PropTypes.string,
+  onClick: PropTypes.func,
+  solidBorder: PropTypes.bool
+};
 
 const styles = {
   outerBox: {
